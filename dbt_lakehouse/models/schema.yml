@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: "Deduplicated customer profile dimension"
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_orders
+    description: "Cleaned order transactions"
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_id
+
+  - name: daily_sales_summary
+    description: "Gold layer aggregated sales performance mart"
+    columns:
+      - name: order_date
+        tests:
+          - not_null
+      - name: gross_revenue
+        tests:
+          - not_null
